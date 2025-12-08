@@ -37,8 +37,38 @@
           <artifactId>mysql-connector-java</artifactId>
           <version>8.0.24</version>
       </dependency>
+
+      <!-- Jackson (Swagger 필수) -->
+      <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+          <version>2.13.4</version>
+      </dependency>
+
+      <!-- Swagger -->
+      <dependency>
+          <groupId>io.springfox</groupId>
+          <artifactId>springfox-swagger2</artifactId>
+          <version>2.9.2</version>
+      </dependency>
+      <dependency>
+          <groupId>io.springfox</groupId>
+          <artifactId>springfox-swagger-ui</artifactId>
+          <version>2.9.2</version>
+      </dependency>
   </dependencies>
   <build>
     <finalName>JaegoKeeper</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <port>8080</port>
+          <path>/</path>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>

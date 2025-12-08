@@ -23,6 +23,10 @@
     <!-- 정적 리소스 처리 -->
     <resources mapping="/resources/**" location="/resources/" />
 
+    <!-- Swagger UI 리소스 -->
+    <resources mapping="swagger-ui.html" location="classpath:/META-INF/resources/" />
+    <resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/" />
+
     <!-- 컴포넌트 스캔 -->
     <context:component-scan base-package="com.jaegokeeper" />
 
