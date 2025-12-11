@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jaegokeeper.hwan.mapper.ItemMapper">
+
+    <insert id="insertItem"
+            parameterType="com.jaegokeeper.hwan.domain.Item"
+            useGeneratedKeys="true"
+            keyProperty="itemId">
+
+        insert into item(
+                         store_id,
+                         item_name,
+                         created_at,
+                         del_yn
+        )
+        values (
+                #{storeId},
+                #{itemId},
+                NOW(),
+                0
+               )
+    </insert>
+
+</mapper>
