@@ -1,5 +1,6 @@
 package com.jaegokeeper.psj.dto;
 
+<<<<<<< HEAD
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -21,4 +22,34 @@ public class ItemDto {
     @Size(max = 100, message = "아이템 이름은 최대 100자까지 입력 가능합니다.")
     private String itemName;
 
+=======
+public class ItemDto {
+    private int itemId;
+    private int storeId;
+    private String itemName;
+
+    public int getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
+    }
+
+    public int getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+>>>>>>> b6f50670bb624145e2ce410df835b0769fc70590
 }
