@@ -20,17 +20,28 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Integer registerItem(ItemCreateRequestDTO itemCreateRequestDTO) {
 
+        Integer quantity = itemCreateRequestDTO.getQuantity();
+        String itemName = itemCreateRequestDTO.getItemName();
+        Integer storeId = itemCreateRequestDTO.getStoreId();
+        if (storeId <= 0) {
+            throw new IllegalArgumentException("storeId는 1 이상이어야 합니다.");
+        }
+
+        if (quantity < 0) {
+            throw new IllegalArgumentException("quantity는 0 이상이어야 합니다.");
+        }
+
         Item item = new Item();
-        item.setStoreId(itemCreateRequestDTO.getStoreId());
-        item.setItemName(itemCreateRequestDTO.getItemName());
+        item.setStoreId(storeId);
+        item.setItemName(itemName);
 
         itemMapper.insertItem(item);
 
 
         Stock stock = new Stock();
         stock.setItemId(item.getItemId());
-        stock.setStoreId(itemCreateRequestDTO.getStoreId());
-        stock.setQuantity(itemCreateRequestDTO.getQuantity());
+        stock.setStoreId(storeId);
+        stock.setQuantity(quantity);
 
         stockMapper.insertStock(stock);
 

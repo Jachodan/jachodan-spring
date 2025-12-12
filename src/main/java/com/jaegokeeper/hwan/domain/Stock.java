@@ -7,11 +7,11 @@ import lombok.Setter;
 @Setter
 public class Stock {
 
-    private Integer StockId;
+    private Integer stockId;
 
-    private Integer ItemId;
+    private Integer itemId;
 
-    private Integer StoreId;
+    private Integer storeId;
 
     private Integer quantity;
 

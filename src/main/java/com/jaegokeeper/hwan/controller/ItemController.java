@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/items")
 @RequiredArgsConstructor
@@ -18,7 +20,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ResponseEntity<ItemCreateResponseDTO> createItem(@RequestBody ItemCreateRequestDTO itemCreateRequestDTO) {
+    public ResponseEntity<ItemCreateResponseDTO> createItem(@Valid @RequestBody ItemCreateRequestDTO itemCreateRequestDTO) {
 
 
         Integer itemId = itemService.registerItem(itemCreateRequestDTO);
