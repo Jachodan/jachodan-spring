@@ -18,7 +18,7 @@
         )
         values (
                 #{storeId},
-                #{itemId},
+                #{itemName},
                 NOW(),
                 0
                )
