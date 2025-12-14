@@ -1,55 +1,24 @@
 package com.jaegokeeper.psj.dto;
-
-<<<<<<< HEAD
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ItemDto {
     private int itemId;
 
-    @NotNull(message = "스토어 아이디는 null 입니다.")
-    private int storeId;
+    @NotNull(message = "스토어 아이디는 null입니다.")
+    private Integer storeId;
 
     @NotBlank(message = "아이템 이름은 필수입니다.")
     @Size(max = 100, message = "아이템 이름은 최대 100자까지 입력 가능합니다.")
     private String itemName;
-
-=======
-public class ItemDto {
-    private int itemId;
-    private int storeId;
-    private String itemName;
-
-    public int getItemId() {
-        return itemId;
-    }
-
-    public void setItemId(int itemId) {
-        this.itemId = itemId;
-    }
-
-    public int getStoreId() {
-        return storeId;
-    }
-
-    public void setStoreId(int storeId) {
-        this.storeId = storeId;
-    }
-
-    public String getItemName() {
-        return itemName;
-    }
-
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
->>>>>>> b6f50670bb624145e2ce410df835b0769fc70590
 }

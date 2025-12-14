@@ -1,100 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-<<<<<<< HEAD
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans.xsd
-           http://www.springframework.org/schema/mvc
-           http://www.springframework.org/schema/mvc/spring-mvc.xsd
-           http://mybatis.org/schema/mybatis-spring
-           http://mybatis.org/schema/mybatis-spring.xsd">
-=======
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="
-           http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context.xsd
-           http://www.springframework.org/schema/data/jpa
-           http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
-           http://www.springframework.org/schema/tx
-           http://www.springframework.org/schema/tx/spring-tx.xsd">
->>>>>>> b6f50670bb624145e2ce410df835b0769fc70590
+           https://www.springframework.org/schema/context/spring-context.xsd
+           http://mybatis.org/schema/mybatis-spring
+           https://mybatis.org/schema/mybatis-spring-2.0.xsd">
 
-    <mvc:annotation-driven />
+    <!-- Component Scan -->
+    <context:component-scan base-package="com.jaegokeeper.psj"/>
 
-    <!-- DataSource -->
+    <!-- DataSource 설정 -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
-<<<<<<< HEAD
-        <property name="url" value="jdbc:mysql://jacho-jaegoserver.mysql.database.azure.com:3306/jaego?useSSL=true&amp;requireSSL=false&amp;serverTimezone=Asia/Seoul"/>
-=======
-        <property name="url" value="jdbc:mysql://jacho-jaegoserver.mysql.database.azure.com:3306/jaego?useSSL=true&amp;serverTimezone=Asia/Seoul"/>
->>>>>>> b6f50670bb624145e2ce410df835b0769fc70590
+        <property name="url" value="jdbc:mysql://jacho-jaegoserver.mysql.database.azure.com/Jaego?serverTimezone=Asia/Seoul"/>
         <property name="username" value="jachomaster"/>
         <property name="password" value="is2jaegosafe?"/>
-
-
     </bean>
 
-<<<<<<< HEAD
-=======
-    <!-- (옵션) JdbcTemplate: JPA 사용 시 실제 사용 안 함 -->
->>>>>>> b6f50670bb624145e2ce410df835b0769fc70590
-    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+    <!-- MyBatis SqlSessionFactory 등록 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-    </bean>
-
-<<<<<<< HEAD
-    <!-- MyBatis -->
-    <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-        <!-- 실제로 파일이 존재할 때만 configLocation 사용 -->
-        <!-- <property name="configLocation" value="classpath:mybatis-context.xml"/> -->
         <property name="mapperLocations" value="classpath:/mapper/*.xml"/>
+        <property name="typeAliasesPackage" value="com.jaegokeeper.psj.entity"/>
     </bean>
 
-    <mybatis-spring:scan base-package="com.jaegokeeper.psj.mapper"/>
-
-=======
-    <!-- JPA EntityManagerFactory -->
-    <bean id="entityManagerFactory"
-          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="packagesToScan" value="com.jaegokeeper.psj.entity"/>
-
-        <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-                <property name="generateDdl" value="true"/>
-                <property name="showSql" value="true"/>
-            </bean>
-        </property>
-
-        <property name="jpaProperties">
-            <props>
-                <prop key="hibernate.hbm2ddl.auto">update</prop>
-                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</prop>
-            </props>
-        </property>
+    <!-- MyBatis MapperScannerConfigurer (Mapper 자동 등록) -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.jaegokeeper.psj.mapper"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
 
-    <!-- JPA 트랜잭션 -->
-    <bean id="transactionManager"
-          class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-    </bean>
-
-    <tx:annotation-driven transaction-manager="transactionManager"/>
-
-    <!-- JPA Repository 스캔 -->
-    <jpa:repositories base-package="com.jaegokeeper.psj.repository"/>
-
-    <!-- 컴포넌트 스캔 -->
-    <context:component-scan base-package="com.jaegokeeper.psj"/>
->>>>>>> b6f50670bb624145e2ce410df835b0769fc70590
 </beans>
