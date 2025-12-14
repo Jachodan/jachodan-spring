@@ -24,4 +24,54 @@
                )
     </insert>
 
+    <select id="countItemList" resultType="long">
+        select count(*)
+        from item i
+        join stock s
+        on s.item_id = i.item_id
+        and s.store_id = i.store_id
+
+        <where>
+            i.store_id = #{storeId}
+
+            <if test="filter != null and filter == 'FAVORITE'">
+                and s.favorite_yn = 1
+            </if>
+            <if test="filter != null and filter == 'ZERO_STOCK'">
+                and s.quantity = 0
+            </if>
+
+        </where>
+    </select>
+
+    <select id="findItemList"
+            parameterType="map"
+            resultType="com.jaegokeeper.hwan.dto.ItemListDTO">
+        select
+            i.item_id as itemId,
+            i.item_name as itemName,
+            s.quantity as quantity,
+            s.favorite_yn as favoriteYn,
+            null as imageUrl
+        from item i
+        join stock s
+        on s.item_id = i.item_id
+        and s.store_id = i.store_id
+
+        <where>
+            i.store_id = #{storeId}
+
+            <if test="filter != null and filter == 'FAVORITE'">
+                and s.favorite_yn = 1
+            </if>
+            <if test="filter != null and filter == 'ZERO_STOCK'">
+                and s.quantity = 0
+            </if>
+        </where>
+
+        order by i.item_id desc
+        limit #{size} offset #{offset}
+    </select>
+
+
 </mapper>
