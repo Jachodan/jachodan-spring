@@ -11,10 +11,12 @@ public interface ItemMapper {
     void insertItem(Item item);
 
     long countItemList(@Param("storeId") Integer storeId,
-                       @Param("filter") String filter);
+                       @Param("filters") List<String> filters,
+                       @Param("keyword")String keyword);
 
     List<ItemListDTO> findItemList(@Param("storeId") Integer storeId,
-                                   @Param("filter") String filter,
+                                   @Param("filters") List<String> filters,
+                                   @Param("keyword") String keyword,
                                    @Param("offset") int offset,
                                    @Param("size") int size);
 
