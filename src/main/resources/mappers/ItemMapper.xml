@@ -34,11 +34,14 @@
         <where>
             i.store_id = #{storeId}
 
-            <if test="filter != null and filter == 'FAVORITE'">
+            <if test="filters != null and filters.contains('FAVORITE')">
                 and s.favorite_yn = 1
             </if>
-            <if test="filter != null and filter == 'ZERO_STOCK'">
+            <if test="filters != null and filters.contains('ZERO_STOCK')">
                 and s.quantity = 0
+            </if>
+            <if test="keyword != null and keyword != ''">
+                and i.item_name like concat('%', #{keyword},'%')
             </if>
 
         </where>
@@ -61,11 +64,14 @@
         <where>
             i.store_id = #{storeId}
 
-            <if test="filter != null and filter == 'FAVORITE'">
+            <if test="filters != null and filters.contains('FAVORITE')">
                 and s.favorite_yn = 1
             </if>
-            <if test="filter != null and filter == 'ZERO_STOCK'">
+            <if test="filters != null and filters.contains('ZERO_STOCK')">
                 and s.quantity = 0
+            </if>
+            <if test="keyword != null and keyword != ''">
+                and i.item_name like concat('%', #{keyword},'%')
             </if>
         </where>
 
