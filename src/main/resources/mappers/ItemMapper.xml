@@ -10,74 +10,94 @@
             useGeneratedKeys="true"
             keyProperty="itemId">
 
-        insert into item(
-                         store_id,
-                         item_name,
-                         created_at,
-                         del_yn
+        INSERT INTO item (
+            store_id,
+            item_name,
+            created_at,
+            del_yn
         )
-        values (
-                #{storeId},
-                #{itemName},
-                NOW(),
-                0
+        VALUES (
+                   #{storeId},
+                   #{itemName},
+                   NOW(),
+                   0
                )
     </insert>
 
     <select id="countItemList" resultType="long">
-        select count(*)
-        from item i
-        join stock s
-        on s.item_id = i.item_id
-        and s.store_id = i.store_id
+        SELECT COUNT(*)
+        FROM item i
+        JOIN stock s
+        ON s.item_id = i.item_id
+        AND s.store_id = i.store_id
 
         <where>
             i.store_id = #{storeId}
 
             <if test="filters != null and filters.contains('FAVORITE')">
-                and s.favorite_yn = 1
+                AND s.favorite_yn = 1
             </if>
             <if test="filters != null and filters.contains('ZERO_STOCK')">
-                and s.quantity = 0
+                AND s.quantity = 0
             </if>
             <if test="keyword != null and keyword != ''">
-                and i.item_name like concat('%', #{keyword},'%')
+                AND i.item_name LIKE CONCAT('%', #{keyword}, '%')
             </if>
-
         </where>
     </select>
 
     <select id="findItemList"
             parameterType="map"
             resultType="com.jaegokeeper.hwan.dto.ItemListDTO">
-        select
-            i.item_id as itemId,
-            i.item_name as itemName,
-            s.quantity as quantity,
-            s.favorite_yn as favoriteYn,
-            null as imageUrl
-        from item i
-        join stock s
-        on s.item_id = i.item_id
-        and s.store_id = i.store_id
+        SELECT
+        i.item_id   AS itemId,
+        i.item_name AS itemName,
+        s.quantity  AS quantity,
+        s.favorite_yn AS favoriteYn,
+        NULL        AS imageUrl
+        FROM item i
+        JOIN stock s
+        ON s.item_id = i.item_id
+        AND s.store_id = i.store_id
 
         <where>
             i.store_id = #{storeId}
 
             <if test="filters != null and filters.contains('FAVORITE')">
-                and s.favorite_yn = 1
+                AND s.favorite_yn = 1
             </if>
             <if test="filters != null and filters.contains('ZERO_STOCK')">
-                and s.quantity = 0
+                AND s.quantity = 0
             </if>
             <if test="keyword != null and keyword != ''">
-                and i.item_name like concat('%', #{keyword},'%')
+                AND i.item_name LIKE CONCAT('%', #{keyword}, '%')
             </if>
         </where>
 
-        order by i.item_id desc
-        limit #{size} offset #{offset}
+        ORDER BY i.item_id DESC
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
+    <select id="findItemDetail"
+            resultType="com.jaegokeeper.hwan.dto.ItemDetailDTO">
+
+        SELECT
+            i.item_id   AS itemId,
+            i.item_name AS itemName,
+            s.quantity  AS quantity,
+            s.favorite_yn AS favoriteYn,
+            NULL        AS imageUrl,
+            sa.safe_quantity AS safeQuantity,
+            GREATEST(i.updated_at, s.updated_at) AS lastUpdatedAt
+        FROM item i
+                 JOIN stock s
+                      ON s.item_id = i.item_id
+                          AND s.store_id = i.store_id
+                 LEFT JOIN safe sa
+                           ON sa.stock_id = s.stock_id
+        WHERE i.store_id = #{storeId}
+          AND i.item_id  = #{itemId}
+          AND i.del_yn   = b'0'
+    </select>
 
 </mapper>

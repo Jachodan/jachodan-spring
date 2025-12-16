@@ -2,6 +2,7 @@ package com.jaegokeeper.hwan.service;
 
 import com.jaegokeeper.hwan.domain.Item;
 import com.jaegokeeper.hwan.domain.Stock;
+import com.jaegokeeper.hwan.dto.ItemDetailDTO;
 import com.jaegokeeper.hwan.dto.ItemListDTO;
 import com.jaegokeeper.hwan.dto.ItemCreateRequestDTO;
 import com.jaegokeeper.hwan.dto.PageResponseDTO;
@@ -96,4 +97,25 @@ public class ItemServiceImpl implements ItemService {
         return new PageResponseDTO<>(content, page, size, totalElements, totalPages);
 
     }
+
+    @Transactional
+    @Override
+    public ItemDetailDTO getItemDetail(Integer storeId, Integer itemId) {
+
+        if (storeId == null || storeId <= 0) {
+            throw new IllegalArgumentException("storeId는 1 이상이어야 합니다.");
+        }
+        if (itemId == null || itemId <= 0) {
+            throw new IllegalArgumentException("itemId는 1 이상이어야 합니다.");
+        }
+        ItemDetailDTO dto = itemMapper.findItemDetail(storeId, itemId);
+
+        if (dto == null) {
+            throw new IllegalArgumentException("존재하지 않는 아이템입니다.");
+        }
+
+        return dto;
+    }
+
+
 }
