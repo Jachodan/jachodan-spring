@@ -1,9 +1,6 @@
 package com.jaegokeeper.hwan.controller;
 
-import com.jaegokeeper.hwan.dto.ItemCreateRequestDTO;
-import com.jaegokeeper.hwan.dto.ItemCreateResponseDTO;
-import com.jaegokeeper.hwan.dto.ItemListDTO;
-import com.jaegokeeper.hwan.dto.PageResponseDTO;
+import com.jaegokeeper.hwan.dto.*;
 import com.jaegokeeper.hwan.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +35,15 @@ public class ItemController {
             @RequestParam(required = false) List<String> filters,
             @RequestParam(required = false) String keyword
     ) {
-        return ResponseEntity.ok(itemService.getItemList(storeId, page, size, filters,keyword));
+        return ResponseEntity.ok(itemService.getItemList(storeId, page, size, filters, keyword));
+    }
+
+    @GetMapping("/{itemId}")
+    public ResponseEntity<ItemDetailDTO> getItemDetail(
+            @RequestParam Integer storeId,
+            @PathVariable Integer itemId
+    ) {
+        ItemDetailDTO dto = itemService.getItemDetail(storeId, itemId);
+        return ResponseEntity.ok(dto);
     }
 }

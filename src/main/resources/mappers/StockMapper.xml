@@ -10,18 +10,18 @@
             useGeneratedKeys="true"
             keyProperty="stockId">
 
-        insert into stock(
-                          item_id,
-                          store_id,
-                          quantity,
-                          favorite_yn
+        INSERT INTO stock (
+            item_id,
+            store_id,
+            quantity,
+            favorite_yn
         )
-        values (
-                #{itemId},
-                #{storeId},
-                #{quantity},
-                0
-
+        VALUES (
+                   #{itemId},
+                   #{storeId},
+                   #{quantity},
+                   0
                )
     </insert>
+
 </mapper>
