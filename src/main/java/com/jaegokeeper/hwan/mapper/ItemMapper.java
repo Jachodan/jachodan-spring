@@ -3,7 +3,6 @@ package com.jaegokeeper.hwan.mapper;
 import com.jaegokeeper.hwan.domain.Item;
 import com.jaegokeeper.hwan.dto.ItemDetailDTO;
 import com.jaegokeeper.hwan.dto.ItemListDTO;
-import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
