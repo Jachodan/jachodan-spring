@@ -13,14 +13,16 @@
         INSERT INTO item (
             store_id,
             item_name,
+            image_id,
             created_at,
             del_yn
         )
         VALUES (
                    #{storeId},
                    #{itemName},
+                   #{imageId},
                    NOW(),
-                   0
+                   b'0'
                )
     </insert>
 
@@ -54,11 +56,14 @@
         i.item_name AS itemName,
         s.quantity  AS quantity,
         s.favorite_yn AS favoriteYn,
-        NULL        AS imageUrl
+        im.path        AS imageUrl
         FROM item i
         JOIN stock s
         ON s.item_id = i.item_id
         AND s.store_id = i.store_id
+        LEFT JOIN image im
+            ON im.image_id = i.image_id
+        AND im.is_active = b'1'
 
         <where>
             i.store_id = #{storeId}
@@ -86,7 +91,7 @@
             i.item_name AS itemName,
             s.quantity  AS quantity,
             s.favorite_yn AS favoriteYn,
-            NULL        AS imageUrl,
+            im.path AS imageUrl,
             sa.safe_quantity AS safeQuantity,
             GREATEST(i.updated_at, s.updated_at) AS lastUpdatedAt
         FROM item i
@@ -95,9 +100,22 @@
                           AND s.store_id = i.store_id
                  LEFT JOIN safe sa
                            ON sa.stock_id = s.stock_id
+        LEFT JOIN image im
+            ON im.image_id = i.image_id
+        AND im.is_active = b'1'
         WHERE i.store_id = #{storeId}
           AND i.item_id  = #{itemId}
           AND i.del_yn   = b'0'
     </select>
+
+    <update id="updateItem">
+        UPDATE item
+        SET item_name = #{itemName},
+            image_id = #{imageId}
+        WHERE store_id = #{storeId}
+            AND item_id = #{itemId}
+            AND del_yn = b'0'
+    </update>
+
 
 </mapper>

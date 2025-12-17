@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface ItemMapper {
 
+    //아이템 등록
     void insertItem(Item item);
 
     long countItemList(@Param("storeId") Integer storeId,
@@ -22,6 +23,13 @@ public interface ItemMapper {
                                    @Param("offset") int offset,
                                    @Param("size") int size);
 
+    //아이템 상세
     ItemDetailDTO findItemDetail(@Param("storeId") Integer storeId,
                                  @Param("itemId") Integer itemId);
+
+    //아이템 수정
+    int updateItem(@Param("storeId") Integer storeId,
+                   @Param("itemId") Integer itemId,
+                   @Param("itemName") String itemName,
+                   @Param("imageId") Integer imageId);
 }

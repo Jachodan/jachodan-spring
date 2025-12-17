@@ -2,13 +2,8 @@ package com.jaegokeeper.hwan.service;
 
 import com.jaegokeeper.hwan.domain.Item;
 import com.jaegokeeper.hwan.domain.Stock;
-import com.jaegokeeper.hwan.dto.ItemDetailDTO;
-import com.jaegokeeper.hwan.dto.ItemListDTO;
-import com.jaegokeeper.hwan.dto.ItemCreateRequestDTO;
-import com.jaegokeeper.hwan.dto.PageResponseDTO;
-import com.jaegokeeper.hwan.mapper.ItemMapper;
-import com.jaegokeeper.hwan.mapper.StockMapper;
-import com.jaegokeeper.hwan.mapper.StoreMapper;
+import com.jaegokeeper.hwan.dto.*;
+import com.jaegokeeper.hwan.mapper.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +17,12 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
     private final StockMapper stockMapper;
     private final StoreMapper storeMapper;
+    private final SafeMapper safeMapper;
+    private final StockHistoryMapper stockHistoryMapper;
 
     @Transactional
     @Override
-    public Integer registerItem(ItemCreateRequestDTO itemCreateRequestDTO) {
+    public Integer createItem(ItemCreateRequestDTO itemCreateRequestDTO) {
 
         String itemName = itemCreateRequestDTO.getItemName();
         Integer storeId = itemCreateRequestDTO.getStoreId();
@@ -46,6 +43,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = new Item();
         item.setStoreId(storeId);
         item.setItemName(itemName);
+        item.setImageId(itemCreateRequestDTO.getImageId());
 
         itemMapper.insertItem(item);
 
@@ -56,6 +54,10 @@ public class ItemServiceImpl implements ItemService {
         stock.setQuantity(quantity);
 
         stockMapper.insertStock(stock);
+        int inserted = safeMapper.insertSafe(stock.getStockId(), 0);
+        if (inserted != 1) {
+            throw new IllegalArgumentException("safe 생성 실패");
+        }
 
         return item.getItemId();
     }
@@ -98,6 +100,7 @@ public class ItemServiceImpl implements ItemService {
 
     }
 
+    //아이템 상세 조회
     @Transactional
     @Override
     public ItemDetailDTO getItemDetail(Integer storeId, Integer itemId) {
@@ -115,6 +118,41 @@ public class ItemServiceImpl implements ItemService {
         }
 
         return dto;
+    }
+
+    @Transactional
+    @Override
+    public void modifyItem(Integer storeId, Integer itemId, ItemModifyRequestDTO dto) {
+
+        StockKeyDTO stockKey = stockMapper.findStockKey(storeId, itemId);
+        if (stockKey == null) throw new IllegalArgumentException("재고 정보가 없습니다.");
+        Integer targetQuantity = dto.getTargetQuantity();
+        Integer existingStock = stockKey.getQuantity();
+        Integer delta = targetQuantity - existingStock;
+
+        if (dto.getTargetQuantity() < 0) {
+            throw new IllegalArgumentException("quantity는 0 이상");
+        }
+        if (dto.getSafeQuantity() < 0) {
+            throw new IllegalArgumentException("safeQuantity는 0 이상");
+        }
+
+
+        int itemUpdated = itemMapper.updateItem(storeId, itemId, dto.getItemName(), dto.getImageId());
+        if (itemUpdated != 1) {
+            throw new IllegalArgumentException("아이템 수정 실패");
+        }
+        int stockUpdated = stockMapper.updateQuantity(stockKey.getStockId(), dto.getTargetQuantity(), dto.getFavoriteYn());
+        if (stockUpdated != 1) {
+            throw new IllegalArgumentException("재고 수정 실패");
+        }
+        int safeUpdated = safeMapper.updateSafe(stockKey.getStockId(), dto.getSafeQuantity());
+        if (safeUpdated != 1) {
+            throw new IllegalArgumentException("안전재고 수정 실패");
+        }
+        if (delta != 0) {
+            stockHistoryMapper.insertHistory(stockKey.getStockId(), "ADJUST", delta);
+        }
     }
 
 
