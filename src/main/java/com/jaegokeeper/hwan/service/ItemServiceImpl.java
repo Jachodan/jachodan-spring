@@ -2,6 +2,7 @@ package com.jaegokeeper.hwan.service;
 
 import com.jaegokeeper.hwan.domain.Item;
 import com.jaegokeeper.hwan.domain.Stock;
+import com.jaegokeeper.hwan.domain.enums.StockHistoryType;
 import com.jaegokeeper.hwan.dto.*;
 import com.jaegokeeper.hwan.mapper.*;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.jaegokeeper.hwan.domain.enums.StockHistoryType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +23,10 @@ public class ItemServiceImpl implements ItemService {
     private final StoreMapper storeMapper;
     private final SafeMapper safeMapper;
     private final StockHistoryMapper stockHistoryMapper;
+    private final StockService stockService;
 
+
+    //아이템 생성
     @Transactional
     @Override
     public Integer createItem(ItemCreateRequestDTO itemCreateRequestDTO) {
@@ -63,6 +69,15 @@ public class ItemServiceImpl implements ItemService {
         return item.getItemId();
     }
 
+    @Override
+    public void softDeleteItem(Integer storeId, Integer itemId) {
+        int updated = itemMapper.softDeleteItem(storeId, itemId);
+        if (updated != 1) {
+            throw new IllegalStateException("삭제 실패");
+        }
+    }
+
+    //아이템 리스트
     @Transactional
     @Override
     public PageResponseDTO<ItemListDTO> getItemList(Integer storeId, int page, int size, List<String> filters, String keyword) {
@@ -124,39 +139,27 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public void modifyItem(Integer storeId, Integer itemId, ItemModifyRequestDTO dto) {
-
-        Integer targetQuantity = dto.getTargetQuantity();
-        Integer safeQuantity = dto.getSafeQuantity();
-
-        if (targetQuantity == null || targetQuantity < 0) {
-            throw new IllegalArgumentException("quantity는 0 이상");
+        Integer realStockId = stockMapper.findStockIdByStoreAndItem(storeId, itemId);
+        if (realStockId == null) {
+            throw new IllegalStateException("재고 없음");
         }
-        if (safeQuantity == null || safeQuantity < 0) {
-            throw new IllegalArgumentException("safeQuantity는 0 이상");
+        if (!realStockId.equals(dto.getStockId())) {
+            throw new IllegalArgumentException("잘못된 stockId");
         }
-
-        StockKeyDTO stockKey = stockMapper.findStockKey(storeId, itemId);
-        if (stockKey == null) throw new IllegalStateException("재고 정보가 없습니다.");
-        Integer existingStock = stockKey.getQuantity();
-        int delta = targetQuantity - existingStock;
-
+        // item 수정
 
         int itemUpdated = itemMapper.updateItem(storeId, itemId, dto.getItemName(), dto.getImageId());
         if (itemUpdated != 1) {
             throw new IllegalStateException("아이템 수정 실패");
         }
-        int stockUpdated = stockMapper.updateQuantity(stockKey.getStockId(), targetQuantity, dto.getFavoriteYn());
-        if (stockUpdated != 1) {
-            throw new IllegalStateException("재고 수정 실패");
-        }
-        int safeUpdated = safeMapper.updateSafe(stockKey.getStockId(), safeQuantity);
-        if (safeUpdated != 1) {
-            throw new IllegalStateException("안전재고 수정 실패");
-        }
-        if (delta != 0) {
-            stockHistoryMapper.insertHistory(stockKey.getStockId(), "ADJUST", delta);
-        }
-    }
 
+        // 재고 수정
+        Integer stockId = dto.getStockId();
+        Integer targetQuantity = dto.getTargetQuantity();
+        Integer safeQuantity = dto.getSafeQuantity();
+        Boolean favoriteYn = dto.getFavoriteYn();
+
+        stockService.adjustStock(stockId,targetQuantity,safeQuantity,favoriteYn);
+    }
 
 }

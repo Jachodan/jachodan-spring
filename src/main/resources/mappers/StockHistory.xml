@@ -8,7 +8,7 @@
 <!--    재고조정시 히스토리 삽입-->
     <insert id="insertHistory">
         INSERT INTO stock_history (stock_id, his_type, quantity, created_at)
-        VALUES (#{stockId}, #{hisType}, #{quantity}, NOW())
+        VALUES (#{stockId}, #{hisType}, #{delta}, NOW())
     </insert>
 
 </mapper>

@@ -24,14 +24,14 @@
                )
     </insert>
 
-    <select id="findStockKey" resultType="com.jaegokeeper.hwan.dto.StockKeyDTO">
-        SELECT stock_id as stockId,
-               quantity as quantity
+    <select id="findQuantityByStockId" resultType="int">
+        SELECT quantity
         FROM stock
-        WHERE store_id = #{storeId}
-        AND   item_id = #{itemId}
+        WHERE stock_id = #{stockId}
     </select>
 
+
+<!--    재고 직접 조정용-->
     <update id="updateQuantity">
             UPDATE stock
             SET quantity = #{quantity},
@@ -39,5 +39,23 @@
             WHERE stock_id = #{stockId}
     </update>
 
+    <update id="increaseQuantity">
+        UPDATE stock
+        SET quantity = quantity + #{amount}
+        WHERE stock_id = #{stockId}
+    </update>
 
+    <update id="decreaseQuantity">
+        UPDATE stock
+        SET quantity = quantity - #{amount}
+        WHERE stock_id = #{stockId}
+        AND quantity >= #{amount}
+    </update>
+    
+    <select id="findStockIdByStoreAndItem" resultType="int">
+        SELECT stock_id
+        FROM stock
+        WHERE store_id = #{storeId}
+        AND item_id = #{itemId}
+    </select>
 </mapper>

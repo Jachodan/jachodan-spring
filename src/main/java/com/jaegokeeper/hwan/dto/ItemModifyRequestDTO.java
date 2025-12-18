@@ -4,6 +4,7 @@ package com.jaegokeeper.hwan.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -11,11 +12,13 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class ItemModifyRequestDTO {
 
+
+
     @NotBlank(message = "itemName은 필수입니다.")
     private String itemName;
 
-//    @NotNull(message = "quantity는 필수입니다.")
-//    private Integer quantity;
+    @NotNull
+    private Integer stockId;
 
     @NotNull
     private Boolean favoriteYn;
@@ -23,9 +26,11 @@ public class ItemModifyRequestDTO {
     private Integer imageId;
 
     @NotNull
+    @Min(0)
     private Integer safeQuantity;
 
     @NotNull
+    @Min(0)
     private Integer targetQuantity;
 }
 

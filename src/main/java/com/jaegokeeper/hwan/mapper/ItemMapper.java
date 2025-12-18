@@ -12,6 +12,10 @@ public interface ItemMapper {
     //아이템 등록
     void insertItem(Item item);
 
+    //아이템 삭제
+    int softDeleteItem(@Param("storeId") Integer storeId,
+                       @Param("itemId") Integer itemId);
+
     long countItemList(@Param("storeId") Integer storeId,
                        @Param("filters") List<String> filters,
                        @Param("keyword")String keyword);

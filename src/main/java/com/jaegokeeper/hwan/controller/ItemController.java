@@ -54,6 +54,15 @@ public class ItemController {
             @Valid @RequestBody ItemModifyRequestDTO dto
     ) {
         itemService.modifyItem(storeId, itemId, dto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{itemId}")
+    public ResponseEntity<Void> deleteItem(
+            @RequestParam Integer storeId,
+            @PathVariable Integer itemId
+    ) {
+        itemService.softDeleteItem(storeId, itemId);
+        return ResponseEntity.noContent().build();
     }
 }
