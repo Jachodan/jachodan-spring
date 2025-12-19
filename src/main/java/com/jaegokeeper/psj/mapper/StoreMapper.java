@@ -4,5 +4,5 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface StoreMapper {
-    boolean existsById(String StoreId);
+    boolean existsById(int StoreId);
 }

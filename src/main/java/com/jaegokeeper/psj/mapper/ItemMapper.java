@@ -7,11 +7,14 @@ import java.util.List;
 
 @Mapper
 public interface ItemMapper {
+
     void insertItem(ItemDto dto);
 
     boolean existsByName(String itemName);
 
     ItemDto selectItemById(int itemId);
+
+    boolean existsByStoreId(int storeId);
 
     // 전체조회
     List<ItemDto> selectAllItems();

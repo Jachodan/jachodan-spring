@@ -5,6 +5,12 @@
 
 <mapper namespace="com.jaegokeeper.psj.mapper.ItemMapper">
 
+    <!-- Item용 store 존재 확인 -->
+    <select id="existsStoreById" parameterType="int" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM store
+        WHERE store_id = #{storeId}
+    </select>
     <!-- 아이템 저장 -->
     <insert id="insertItem" parameterType="com.jaegokeeper.psj.dto.ItemDto">
         INSERT INTO item (store_id, item_name)
